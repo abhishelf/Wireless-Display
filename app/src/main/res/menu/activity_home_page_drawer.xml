@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/ON"
+            android:icon="@drawable/ic_visibility_black_24dp"
+            android:title="On" />
+        <item
+            android:id="@+id/OFF"
+            android:icon="@drawable/ic_visibility_off_black_24dp"
+            android:title="Off" />
+        <item
+            android:id="@+id/RESET"
+            android:icon="@drawable/ic_restore_black_24dp"
+            android:title="Reset" />
+        <item
+            android:id="@+id/LAMPTEST"
+            android:icon="@drawable/ic_shuffle_black_24dp"
+            android:title="Lampt Test" />
+        <item
+            android:id="@+id/BLINK"
+            android:icon="@drawable/ic_album_black_24dp"
+            android:title="Blink" />
+        <item
+            android:id="@+id/CREDIT"
+            android:icon="@drawable/ic_person_black_24dp"
+            android:title="Credit" />
+    </group>
+
+</menu>
