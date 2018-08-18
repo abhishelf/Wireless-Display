@@ -24,13 +24,14 @@ import java.util.UUID;
 
 public class HomePage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+    private static final UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private BluetoothAdapter myBluetooth = null;
     private BluetoothSocket btSocket = null;
     private Set<BluetoothDevice> pairedDevices;
 
     private String address;
+    private int flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,24 +50,16 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         navigationView.setNavigationItemSelectedListener(this);
 
         Intent intent = getIntent();
-        int flag = intent.getIntExtra("EXTRA",-1);
+        flag = intent.getIntExtra("EXTRA",-1);
         if(flag == -1){
             finish();
         }
 
-        if(flag == 1){
-            // Keypad
-            KeypadFragment keypadFragment = new KeypadFragment();
-            keypadFragment.setBtSocket(btSocket);
-            getSupportFragmentManager().beginTransaction().add(R.id.fragmentLayout,keypadFragment).commit();
-        }else{
-            // Pattern
-            PatternFragment patternFragment = new PatternFragment();
-            patternFragment.setBtSocket(btSocket);
-            getSupportFragmentManager().beginTransaction().add(R.id.fragmentLayout,patternFragment).commit();
+        try {
+            bluetooth_connect_device();
+        } catch (Exception e) {
+            Toast.makeText(HomePage.this,"Try Restarting App ...",Toast.LENGTH_SHORT).show();
         }
-
-        try {bluetooth_connect_device();} catch (Exception e) {}
     }
 
     @Override
@@ -76,6 +69,11 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+            try {
+                btSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -84,17 +82,17 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.ON){
-            sendMessage("OS");
+            sendMessage("T<");
         }else if(id == R.id.OFF){
-            sendMessage("T]");
+            sendMessage("T>");
         }else if(id == R.id.RESET){
-            sendMessage("OS");
+            sendMessage("T<");
         }else if(id == R.id.LAMPTEST){
             sendMessage("T[");
         }else if(id == R.id.BLINK){
             sendMessage("T*");
         }else if(id == R.id.CREDIT){
-
+            startActivity(new Intent(HomePage.this,CreditActivity.class));
         }
 
 
@@ -121,6 +119,18 @@ public class HomePage extends AppCompatActivity implements NavigationView.OnNavi
         BluetoothDevice bluetoothDevice = myBluetooth.getRemoteDevice(address);
         btSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(MY_UUID_INSECURE);
         btSocket.connect();
+
+        if(flag == 1){
+            // Keypad
+            KeypadFragment keypadFragment = new KeypadFragment();
+            keypadFragment.setBtSocket(btSocket);
+            getSupportFragmentManager().beginTransaction().add(R.id.fragmentLayout,keypadFragment).commit();
+        }else{
+            // Pattern
+            PatternFragment patternFragment = new PatternFragment();
+            patternFragment.setBtSocket(btSocket);
+            getSupportFragmentManager().beginTransaction().add(R.id.fragmentLayout,patternFragment).commit();
+        }
     }
 
     private void sendMessage(String str){

@@ -110,12 +110,20 @@ public class PatternFragment extends Fragment{
 
     private void sendMessage(){
         String message = "D";
+        try {
+            if(btSocket != null){
+                btSocket.getOutputStream().write('D');
+            }
+        } catch (IOException e) {
+            Toast.makeText(getActivity(),"Broken Pipe",Toast.LENGTH_SHORT).show();
+        }
+
         for(int i=0;i<8;i++){
             char ch = 0B00000000;
             String str = "";
 
             for(int j=0;j<8;j++){
-                if(arrayList.get((8*i)+j) == 0){
+                if(arrayList.get((8*i)+j) == 1){
                     str += "1";
                 }else{
                     str += "0";
@@ -127,7 +135,7 @@ public class PatternFragment extends Fragment{
             message += ch;
             try {
                 if(btSocket != null){
-                    btSocket.getOutputStream().write(("D"+ch).getBytes());
+                    btSocket.getOutputStream().write(ch);
                 }
             } catch (IOException e) {
                 Toast.makeText(getActivity(),"Broken Pipe",Toast.LENGTH_SHORT).show();
